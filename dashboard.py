@@ -1,4 +1,5 @@
 import flet as ft
+import bite  # Make sure this is the correct import for your bite.py file
 
 def interface(page: ft.Page):
     # Set the page title and layout
@@ -21,20 +22,34 @@ def interface(page: ft.Page):
         spacing=10,
     )
 
+    # Create a dynamic list for bites
+    bites_list = ft.Column(spacing=10)
+
+    def create_new_bite(): 
+        # Pass the page and bites_list to the function correctly
+        bite.create_new_bite(page, bites_list)
+
     # Create "Create New Bite" button
-    create_bite_button = ft.ElevatedButton("Create New Bite", on_click=create_new_bite)
+    create_bite_button = ft.ElevatedButton("Create New Bite", on_click=lambda e: create_new_bite())
 
     # Adjust layout
     page.add(
         ft.Column(
             [
-                # Friends section with fixed width
-                ft.Container(friends_section, width=300, height=200, padding=10),
+                # Friends section with padding and fixed size
+                ft.Container(
+                    friends_section,
+                    width=300,  # Width of the section
+                    height=250,  # Height of the section
+                    padding=10,
+                ),
 
                 # Create New Bite button with padding
-                ft.Container(create_bite_button, padding=20),
+                create_bite_button,
+                bites_list  # Add the dynamic list to the page
             ],
             spacing=20,  # Space between the two containers
+            alignment=ft.MainAxisAlignment.START  # Align the entire column to the top
         )
     )
 
@@ -42,6 +57,4 @@ def add_friend(e):
     # Placeholder for adding friends (could trigger a form or Firebase logic)
     print("Add friend clicked!")
 
-def create_new_bite(e):
-    # Placeholder for the "Create New Bite" functionality
-    print("Create new bite clicked!")
+ft.app(target=interface)
