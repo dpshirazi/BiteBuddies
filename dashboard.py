@@ -57,4 +57,4 @@ def add_friend(e):
     # Placeholder for adding friends (could trigger a form or Firebase logic)
     print("Add friend clicked!")
 
-ft.app(target=interface)
+

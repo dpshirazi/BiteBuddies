@@ -1,7 +1,8 @@
 import flet as ft
 import hashlib
 import firebase_admin
-from firebase_admin import credentials, auth,  firestore
+from firebase_admin import credentials, auth, firestore
+import bcrypt
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("/Users/danielshirazi/Downloads/bitebuddies-8d6f6-firebase-adminsdk-ald1c-229148601d.json")  # Replace with your Firebase Admin SDK JSON file path
@@ -12,7 +13,13 @@ db = firestore.client()  # This sets up `db` to be used throughout your code
 
 # Utility function to hash passwords
 def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password
+
+# Check if a password matches the hashed one
+def check_password(hashed_password, password):
+    return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
 
 # Sign up function
 def signup(email, password):
@@ -54,7 +61,7 @@ def login(email, password):
         entered_hash = hash_password(password)
         
         # Verify the hashes match
-        if stored_hash == entered_hash:
+        if check_password(stored_hash, password):
             return f"Logged in as: {user_doc.id}"  # Return the user's UID
         else:
             return "Error: Invalid password."
@@ -76,7 +83,8 @@ def show_signup_page(page, function):
             result = signup(email, password)
             result_text.value = result
             page.update()
-            function()
+            if "User created with UID" in result:  # Proceed only if signup is successful
+                function()
         else:
             result_text.value = "Please enter both email and password."
             page.update()
@@ -98,7 +106,8 @@ def show_login_page(page, function):
             result = login(email, password)
             result_text.value = result
             page.update()
-            function()
+            if "Logged in as" in result:  # Proceed only if login is successful
+                function()
         else:
             result_text.value = "Please enter both email and password."
             page.update()
@@ -106,7 +115,7 @@ def show_login_page(page, function):
     login_button = ft.ElevatedButton("Login", on_click=handle_login)
     page.add(email_input, password_input, login_button, result_text)
 
-    # Page to ask whether user wants to login or signup
+# Page to ask whether user wants to login or signup
 def ask_signup_or_login(page, function):
     page.clean()
     label = ft.Text("Would you like to Sign Up or Login?")
