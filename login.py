@@ -62,7 +62,7 @@ def login(email, password):
         
         # Verify the hashes match
         if check_password(stored_hash, password):
-            return f"Logged in as: {user_doc.id}"  # Return the user's UID
+            return user_doc.id  # Return the user's UID
         else:
             return "Error: Invalid password."
     except Exception as e:

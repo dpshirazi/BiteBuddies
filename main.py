@@ -16,7 +16,7 @@ def main(page):
 
     # Ensure login/signup is the first screen
     page.controls.clear()
-    login.ask_signup_or_login(page, after_successful_login)
+    user_id_parameter = login.ask_signup_or_login(page, after_successful_login)
     page.update()
 
 # Start the app

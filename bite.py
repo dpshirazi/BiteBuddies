@@ -25,6 +25,7 @@ def create_new_bite(page: ft.Page, bites_list: ft.Column):
             time = time_input.value
             location = location_input.value
             preference = 'Friends' if preference_switch.value else 'Strangers'
+            user_id = user_doc.id
 
             # Add the new bite to the bites list and update the UI
             new_bite = ft.Row(
